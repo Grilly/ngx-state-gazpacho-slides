@@ -1,0 +1,110 @@
+<section>
+    <h1>NGRX</h1>
+    <img src="chapters/images/ngrx_badge.svg" style="width: auto; height: 500px; background: none; border: none; box-shadow: none;">
+</section>
+<section>
+    <h2>NGRX</h2>
+    <p>Reactive Extensions for Angular</p>
+    <p>RxJS powered state management for Angular applications, inspired by Redux</p>
+    <ul>
+        <li>Manage State</li>
+        <li>Isolate side effects</li>
+        <li>Unlock Productivity</li>
+    </ul>
+    <p><a href="https://ngrx.io/">https://ngrx.io/</a></p>
+    <aside class="notes">
+        <ul>
+            <li>NgRx Store: provides reactive state management for Angular apps inspired by Redux using RxJS.</li>
+            <li>NgRx Effects</li>
+            <li>NgRx Schematics: avoid writing common boilerplate -> focus on building your application</li>
+        </ul>
+    </aside>
+</section>
+<section>
+    <h2>Redux in Angular through NGRX</h2>
+    <img src="chapters/images/StateManagement_Redux_ToddMotto.jpg">
+    <p>Source: Todd Motto</p>
+</section>
+<section>
+    <h2>NGRX Store: Actions</h2>
+    <ul>
+        <li>Actions = breadcrumbs of what has happened</li>
+        <li>Actions = User Events, Backend Events, Device Events</li>
+        <li>Actions describe unique events that happen throughout your application and are dispatched from components and services.</li>
+        <li>Actions help you to understand how events are handled in your application.</li>
+    </ul>
+</section>
+<section>
+    <h2>NGRX Store: Actions</h2>
+    <h3>Structure</h3>
+    <pre><code data-trim class="typescript">
+    {
+        type: '[Login Page] Login',
+        payload: {
+            username: string;
+            password: string;
+        }
+    }
+    </code></pre>
+    <p>This action describes an event triggered by a user clicking a login button from the login page (=source) to attempt to authenticate a user (=event). The payload contains the username and password provided from the login page.</p>
+    <aside class="notes">
+        <ul>
+            <li>The type property is for describing the action that will be dispatched in your application.</li>
+            <li>type: [Source] Event</li>
+            <li>Source = provide a context of what category of action it is, and where an action was dispatched from</li>
+            <li>Payload = any associated data needed for the action added as properties</li>
+        </ul>
+    </aside>
+</section>
+<section>
+    <h2>NGRX Store: Actions</h2>
+    <h3>Usage</h3>
+    <pre><code data-trim class="typescript">
+        // login.action.ts
+        import { Action } from '@ngrx/store';
+
+        export class Login implements Action {
+            readonly type = '[Login Page] Login';
+        
+            constructor(public payload: {
+                username: string;
+                password: string
+            }) {}
+        }
+    </code></pre>
+    <pre><code data-trim class="typescript">
+        // login.comonent.ts
+        store.dispatch(new Login({
+            username: 'myemail@email.de',
+            password: 'test'
+        }));
+    </code></pre>
+    <aside class="notes">
+        <ul>
+            <li>Action = Class for type-safe construction of an action when it's being dispatched.</li>
+            <li>The Login action implements the Action interface.</li>
+            <li>The payload is an object of a username and password, that is additional metadata needed for the handling of the login action.</li>
+            <li>When dispatching instantiate a new instance of the action to use.</li>
+        </ul>
+    </aside>
+</section>
+<section>
+    <h2>NGRX Store: Actions</h2>
+    <h3>Good Actions Writing Rules</h3>
+    <ul>
+        <li>Upfront - write actions before developing features</li>
+        <li>Divide - categorize actions based on the event source</li>
+        <li>Many - the more and clearer actions you write, the better you express flows in your application</li>
+        <li>Event-Driven - capture events as you are separating the description of an event and the handling of that event</li>
+        <li>Descriptive - provide context that are targeted to a unique event with more detailed information</li>
+    </ul>
+    <aside class="notes">
+        <ul>
+            <li>upfront: To understand and gain a shared knowledge of the feature being implemented</li>
+            <li>divide: When Source is coming from the backend add API suffic "[Auth API]" or coming from a component add Component suffix "[Auth Component]" or coming from a page add Page suffix "[Login Page]"</li>
+            <li>many: Actions are inexpensive to write</li>
+            <li>event-driven: Actions are no commands</li>
+            <li>descriptive: You can use actions to aid in debugging with the developer tools and get a good insight how the applicatio works</li>
+        </ul>
+    </aside>
+</section>
