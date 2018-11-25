@@ -144,7 +144,7 @@
     <h2>What is Redux: STORE</h2>
     <p>your app’s state is described as a plain object</p>
     <p>State of TODO app</p>
-    <code><pre>
+    <pre><code>
     {
         todos: [{
             text: 'Eat food',
@@ -155,7 +155,7 @@
         }],
         visibilityFilter: 'SHOW_COMPLETED'
     }
-    </pre></code>
+    </code></pre>
     <p>Model without setters</p>
     <p>No arbitrary model changes</p>
 </section>
@@ -163,11 +163,11 @@
     <h2>Redux Action</h2>
     <p>To change something in the state, you need to dispatch an action.</p>
     <p>An action is a plain JavaScript object</p>
-    <code><pre>
+    <pre><code>
         { type: 'ADD_TODO', text: 'Go to swimming pool' }
         { type: 'TOGGLE_TODO', index: 1 }
         { type: 'SET_VISIBILITY_FILTER', filter: 'SHOW_ALL' }
-    </pre></code>
+    </code></pre>
 </section>
 <section>
     <h2>Redux Reducer</h2>
