@@ -3,7 +3,7 @@
 </section>
 <section>
     <h2>Challenge</h2>
-    <p class="fragement">Observing attribute changes</p>
+    <p>Observing attribute changes</p>
     <pre><code data-trim class="json">
     [{
         "items": [
@@ -21,39 +21,18 @@
     }, {...}]
     </code></pre>
     <aside class="notes">
-        TODO Motivation/Why Tonspur und Content
-        our code must manage more state than ever before
-        This state can include server responses and cached data, as well as locally created data that has not yet been persisted to the server. UI state is also increasing in complexity, as we need to manage active routes, selected tabs, spinners, pagination controls, and so on.
-        Managing this ever-changing state is hard. If a model can update another model, then a view can update a model, which updates another model, and this, in turn, might cause another view to update
-        As developers, we are expected to handle optimistic updates, server-side rendering, fetching data before performing route transitions, and so on
-
-        TODO Additional Whys
-        React How-To, we get to a couple of indications of when we benefit from Flux:
-
-        React components are arranged in a hierarchy. Most of the time, your data model also follows a hierarchy. In these situations Flux doesn’t buy you much. Sometimes, however, your data model is not hierarchical. When your React components start to receive props that feel extraneous, or you have a small number of components starting to get very complex, then you might want to look into Flux.
-
-        Also if we dig into the issues we get these recommendations as well. A store-like architecture is recommended if:
-
-        You have a piece of data that needs to be used in multiple places in your app, and passing it via props makes your components break the single-responsibility principle (i.e. makes their interface make less sense)
-
-        But also there is this scenario:
-
-        There are multiple independent actors (generally, the server and the end-user) that may mutate that data
-
-        multiple actors editing concurrently the same data.
-
-        For example, we are passing something 5 or 10 levels up the component tree. The leaves of the tree know what to do with it, but for all the components in the middle the input feels extraneous and makes that component less reusable and more tied to the application. But that is just one example.
-
-        There are situations where components are dependent on each other at completely different points in the component tree, and passing inputs 10 levels up the tree and callback functions 10 levels down the tree then 5 levels up another branch is not scalable in complexity.
-
-        pass data deep down the tree, and react to events several levels up the component tree
-
-        Another issue is, we have sibling components in the tree that are interdependent, and that represent different view for the same data on the screen, like a list of folders with unread messages, and a total unread messages counter on the page header.
-
-        Passing only inputs to components won't scale in complexity.
+        <p>how can we observe a change of an attribute?</p>
+        <p>Motivation</p>
+        <ul>
+            <li>Our frontend code must manage more state than ever before.</li>
+            <li>This state can include server responses, cached data, locally created data that has not yet been persisted to the server</li>
+            <li>UI state is also increasing in complexity: We need to manage active routes, selected tabs, spinners, pagination controls,...</li>
+            <li>Managing this ever-changing state is hard. If a model can update another model, then a view can update a model, which updates another model, and this, in turn, might cause another view to update</li>
+            <li>As developers, we are expected to handle optimistic updates, server-side rendering, fetching data before performing route transitions.</li>
+        </ul>
     </aside>
 </section>
-<section>
+<!-- <section>
     <h2>Complexity</h2>
     TODO Content Komplexität erklären
     <p>This complexity is difficult to handle as we're mixing two concepts that are very hard for the human mind to
@@ -81,42 +60,87 @@
             <td>CHAOS</td>
         </tr>
     </table>
-</section>
-<section>
-    <h2>Hack Solution: Use plain RxJS</h2>
-    <pre><code data-trim class="typescript">
-        getSafes(): Observable&lt;Safe[]> {
-        getSafe(safeId: string): Observable&lt;Safe> {
-        getItems(safeId: string): Observable&lt;SafeItem[]> {
-        getItem(safeId: string, itemId: string): Observable&lt;SafeItem> {
-    </code></pre>
-    <p class="fragment">Services manage state using RxJS</p>
-    <p class="fragment">Services are for behavior, not for state.</p>
-    <p class="fragment">RxJS HELL</p>
-    <p class="fragment">Architecture Pattern to solve this: flux</p>
-    TODO content gut genug
-</section>
+</section> -->
 <section>
     <h2>Solution</h2>
-    <h3>Redux</h3>
+    <h3>Use plain RxJS</h3>
+    <pre><code data-trim class="typescript" style="font-size: 21px;">
+        // safes.service.ts
+        safes: BehaviorSubject&lt;Safe[]> = new BehaviorSubject&lt;Safe[]>([]);
+        getSafes(): Observable&lt;Safe[]> {...}
+        getSafe(safeId: string): Observable&lt;Safe> {...}
+    </code></pre>
+    <p class="fragment">Services manage state using RxJS</p>
+    <p class="fragment">But: Services should be used for behavior, not for state.</p>
+    <p class="fragment">Leads to: RxJS HELL</p>
+</section>
+<section>
+    <h2>Real Solution</h2>
+    <h3 class="fragment" data-fragment-index="1">Redux</h3>
+    <img  class="fragment" data-fragment-index="1" src="chapters/images/redux_badge.png" style="width: auto; height: 500px; background: none; border: none; box-shadow: none;">
 </section>
 <section>
     <h2>Redux</h2>
-    <p>Redux is a predictable state container for JavaScript apps.</p>
-    <p>Creator: Dan Abramov</p>
+    <p>"Redux is a predictable state container for JavaScript apps."<br><a href="https://redux.js.org/">https://redux.js.org/</a></p>
+    <p class="fragment">Creator: Dan Abramov</p>
+    <aside class="notes">
+        Helps you to tame the state beast.
+    </aside>
+</section>
+<section>
+    <h2>Why to use Redux?</h2>
+    <ul>
+        <li>State management becomes maintainable</li>
+        <li>Redux gives us out of the box:
+            <ul>
+                <li>Logging</li>
+                <li>Hot Reloading</li>
+                <li>Time Travel</li>
+                <li>Universal Apps</li>
+                <li>Record & Replay</li>
+            </ul>
+        </li>
+        <li>Has a great developer experience</li>
+        <li>Easy to test</li>
+    </ul>
+    <aside class="notes">
+        no performance concerns
+    </aside>
+</section>
+<section>
+    <h2>When to use Redux?</h2>
+    <ul>
+        <li>Multiple independent actors mutate the application data concurrently.</li>
+        <li>Components are dependent on each other at completely different parts in the component tree.</li>
+        <li>Components that pass data deep down the tree, and react to events several levels up the component tree.</li>
+        <li>Sibling components in the tree that are interdependent, and that represent different views for the same data on the screen.</li>
+        <li>Only passing data to components through inputs won't scale in complexity.</li>
+    </ul>
+    <aside class="notes">
+        <ul>
+            <li>actors = server & end-user</li>
+            <li>dependent components: TODO</li>
+            <li>comp pass deep and react up the tree: TODO</li>
+            <li>interdependent sibling components: list of folders with unread messages and a total unread messages counter on the page header</li>
+            <li>Scaling: TODO</li>
+        </ul>
+    </aside>
+</section>
+<section>
+    <h2>What is Redux</h2>
     <img src="chapters/images/StateManagement_Redux_ToddMotto.jpg">
+    <p>Source: Todd Motto</p>
+    <aside class="notes">
+        Money Withdrawl from the bank
+        <ol>
+            <li>User is the Component</li>
+            <li>Redux Store = Bank Vault => Hold the state of your application -> Single source of truth</li>
+            <li>Go to the bank with an Action in mind = { type: "[BANK COUNTER] WITHDRAW MONEY", amount: "10000€" } -> State is readonly (only Cashier can give you money) -> If something changed, we know why it changed.</li>
+            <li>The Cashier is to the bank what the Reducer is to Redux: The Reducer gets the state and the action and returns the new state. You dispatch the Action to the reducer. The Reducer knows what to do and gets you the money -> Pure Reducers (The cashier always gives you the said amount of money)</li>
+        </ol>
+    </aside>
 </section>
-<section>
-    <h2>When to use Redux</h2>
-    <p>
-        Here are some suggestions on when it makes sense to use Redux:
-        You have reasonable amounts of data changing over time
-        You need a single source of truth for your state            
-        You find that keeping all your state in a top-level component is no longer sufficient
-        Yes, these guidelines are subjective and vague, but this is for good reason. The point at which you should integrate Redux into your application is different for every user and different for every application.
-    </p>
-</section>
-<section>
+<!-- <section>
     <h2>What is Redux: STORE</h2>
     <p>your app’s state is described as a plain object</p>
     <p>State of TODO app</p>
@@ -144,8 +168,6 @@
         { type: 'TOGGLE_TODO', index: 1 }
         { type: 'SET_VISIBILITY_FILTER', filter: 'SHOW_ALL' }
     </pre></code>
-    <p>-> If something changed, we know why it changed.</p>
-    <p>Action = breadcrumbs of what has happened</p>
 </section>
 <section>
     <h2>Redux Reducer</h2>
@@ -153,7 +175,7 @@
     <p>function that takes state and action as arguments, and returns the next state of the app</p>
     <p>Usually multiple smaller reducers that manage parts of the app and one that manages the smaller reducers</p>
     <p>see https://redux.js.org/introduction/coreconcepts for examples</p>
-</section>
+</section>-->
 <section>
     <h2>3 Principles of Redux</h2>
     <ol>
@@ -162,8 +184,10 @@
         <li class="fragement">Changes are made with pure functions</li>
     </ol>
     <aside class="notes">
-        1. The state of your whole application is stored in an object tree within a single store. => This makes it easy to create universal apps, as the state from your server can be serialized and hydrated into the client with no extra coding effort. A single state tree also makes it easier to debug or inspect an application; it also enables you to persist your app's state in development, for a faster development cycle. Some functionality which has been traditionally difficult to implement - Undo/Redo, for example - can suddenly become trivial to implement, if all of your state is stored in a single tree.
-        2. The only way to change the state is to emit an action, an object describing what happened. => This ensures that neither the views nor the network callbacks will ever write directly to the state. Instead, they express an intent to transform the state. Because all changes are centralized and happen one by one in a strict order, there are no subtle race conditions to watch out for. As actions are just plain objects, they can be logged, serialized, stored, and later replayed for debugging or testing purposes.
-        3. To specify how the state tree is transformed by actions, you write pure reducers. => Reducers are just pure functions that take the previous state and an action, and return the next state. Remember to return new state objects, instead of mutating the previous state. You can start with a single reducer, and as your app grows, split it off into smaller reducers that manage specific parts of the state tree. Because reducers are just functions, you can control the order in which they are called, pass additional data, or even make reusable reducers for common tasks such as pagination.
+        <ol>
+            <li>The state of your whole application is stored in an object tree within a single store. => This makes it easy to create universal apps, as the state from your server can be serialized and hydrated into the client with no extra coding effort. A single state tree also makes it easier to debug or inspect an application; it also enables you to persist your app's state in development, for a faster development cycle. Some functionality which has been traditionally difficult to implement - Undo/Redo, for example - can suddenly become trivial to implement, if all of your state is stored in a single tree.</li>
+            <li>The only way to change the state is to emit an action, an object describing what happened. => This ensures that neither the views nor the network callbacks will ever write directly to the state. Instead, they express an intent to transform the state. Because all changes are centralized and happen one by one in a strict order, there are no subtle race conditions to watch out for. As actions are just plain objects, they can be logged, serialized, stored, and later replayed for debugging or testing purposes.</li>
+            <li>To specify how the state tree is transformed by actions, you write pure reducers. => Reducers are just pure functions that take the previous state and an action, and return the next state. Remember to return new state objects, instead of mutating the previous state. You can start with a single reducer, and as your app grows, split it off into smaller reducers that manage specific parts of the state tree. Because reducers are just functions, you can control the order in which they are called, pass additional data, or even make reusable reducers for common tasks such as pagination.</li>
+        </ol>
     </aside>
 </section>
