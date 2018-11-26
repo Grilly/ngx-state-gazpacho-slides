@@ -1,5 +1,58 @@
 <section>
-    <h2>NGRX Entities TODO</h2>
+    <h2>@ngrx/store: Selectors</h2>
+    <h3>Problem</h3>
+    <pre><code data-trim class="typescript">
+        const getAllUsers = createFeatureSelector('users');
+        const getUserById = (id) => createSelector(
+            getAllUsers,
+            users => users.find(user => user.id === id)
+        );
+    </code></pre>
+    <p>-> With 5000 users!?!?</p>
+    <aside class="notes">
+        we have to iterate 5000 users
+    </aside>
+</section>
+<section>
+    <h2>@ngrx/entity TODO</h2>
+    <p>Entity pattern for fast object look ups</p> 5000ster genauso schnell wie 3ter
+    <p>Quickly access one user</p>
+    Array -> 
+    -> Flattened Array (object structure)
+    const users = [
+        {id: 'UUID1', name: 'Peter Mueller'},
+        {id: 'UUID2', name: 'Petra Huber'}
+    ];
+    const usersFlattened = {
+        0: {id: 'UUID1', name: 'Peter Mueller'},
+        1: {id: 'UUID2', name: 'Petra Huber'}
+    };
+
+    export interface User {
+        id: string;
+        name: string;
+    }
+    
+    export interface State extends EntityState<User> {}
+
+    Adapter for State manipulation and selecting: Die will ich verwalten. Verwaltet alle Objecte für mich
+    export const adapter: EntityAdapter<User> = createEntityAdapter<User>();
+    export const initialState: State = adapter.getInitalState({});
+
+    const getUsers = createSelector(ParentSliceSelector, (state) => state.user); // nur Bereich
+    adapter.getSelectors(getUsers); // Adapter erzeugt Selectoren für den Bereich
+
+
+
+        adapter.addOne()
+</section>
+<section>
+    <p>
+Entity State adapter for managing record collections.
+Entity provides an API to manipulate and query entity collections.</p>
+    <p>Reduces boilerplate for creating reducers that manage a collection of models.
+            Provides performant CRUD operations for managing entity collections.
+            Extensible type-safe adapters for selecting entity information.</p>
 </section>
 <section>
     <h2>Exercise 2</h2>
