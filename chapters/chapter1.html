@@ -22,11 +22,11 @@
 </section>
 <section>
     <h2>Redux in Angular through NGRX</h2>
-    <img src="chapters/images/StateManagement_Redux_ToddMotto.jpg">
+    <img src="chapters/images/StateManagement_Redux_ToddMotto.jpg" height="500px">
     <p>Source: Todd Motto</p>
 </section>
 <section>
-    <h2>NGRX Store: Actions</h2>
+    <h2>@ngrx/store: Actions</h2>
     <ul>
         <li>Actions = User Events, Backend Events, Device Events</li>
         <li>Actions = breadcrumbs of what has happened</li>
@@ -35,7 +35,7 @@
     </ul>
 </section>
 <section>
-    <h2>NGRX Store: Actions</h2>
+    <h2>@ngrx/store: Actions</h2>
     <h3>Structure</h3>
     <pre><code data-trim class="typescript">
     {
@@ -57,7 +57,7 @@
     </aside>
 </section>
 <section>
-    <h2>NGRX Store: Actions</h2>
+    <h2>@ngrx/store: Actions</h2>
     <h3>Usage</h3>
     <pre><code data-trim class="typescript">
         // login.action.ts
@@ -89,7 +89,7 @@
     </aside>
 </section>
 <section>
-    <h2>NGRX Store: Actions</h2>
+    <h2>@ngrx/store: Actions</h2>
     <h3>Good Actions Writing Rules</h3>
     <ul>
         <li>Upfront - write actions before developing features</li>
@@ -109,17 +109,220 @@
     </aside>
 </section>
 <section>
-    <h2>NGRX Store: Reducers TODO</h2>
-    <p></p>
+    <h2>@ngrx/store: Reducers</h2>
+    <ul>
+        <li>Responsible for state changes in an immutable way</li>
+        <li>Pure functions</li>
+        <li>Takes current state and the latest action dispatched to compute based on the action type a new state</li>
+    </ul>
 </section>
 <section>
-    <h2>NGRX Store: Selectors TODO</h2>
-    <img src="chapters/images/StateManagement_Redux_Selectors_ToddMotto.png">
+    <h2>@ngrx/store: Reducers</h2>
+    <h3>Structure</h3>
+    <pre><code data-trim class="typescript">
+        export function loginReducer(state = {}, action: Scoreboard.ActionsUnion): State {
+            switch (action.type) {
+                case '[Login Page] Login': {
+                    return [...state, {username: action.payload.username}]
+                }
+                default: {
+                    return state;
+                }
+            }
+        }
+    </code></pre>
+    <aside class="notes">
+        <ul>
+            <li>Interface or type that defines the shape of the state.</li>
+            <li>Arguments including the initial state or current state and the current action.</li>
+            <li>Switch statement</li>
+            <li>The action types defined with the actions are reused in your reducer functions as case statements</li>
+            <li>State transitions are not modifying the original state but are returning a new state object using the spread operator.</li>
+            <li>The spread syntax copies the properties from the current state into the object, creating a new reference. This ensures that a new state is produced with each change, preserving the purity of the change. This also promotes referential integrity, guaranteeing that the old reference was discarded when a state change occurred.</li>
+            <li>When an action is dispatched, all registered reducers receive the action. Whether they handle the action is determined by the switch statement. For this reason, each switch statement always includes a default case that returns the previous state when the reducer function doesn't need to handle the action.</li>
+        </ul>
+    </aside>
+</section>
+<section>
+    <h2>@ngrx/store: Reducers</h2>
+    <h3>Registering Root State</h3>
+    <pre><code data-trim class="typescript">
+        import { NgModule } from '@angular/core';
+        import { StoreModule } from '@ngrx/store';
+        import { loginReducer } from './login.reducer';
+        
+        @NgModule({
+            imports: [StoreModule.forRoot({ user: loginReducer })],
+        })
+        export class AppModule {}
+    </code></pre>
+    <pre><code data-trim class="typescript">
+        // The state
+        {}
+    </code></pre>
+    <p>Do only ONCE in your project.</p>
+    <aside class="notes">
+        <p>This registers your application with an empty object for the root state.</p>
+        <ul>
+            <li>Registering states with StoreModule.forRoot() ensures that the states are defined upon application startup</li>
+            <li>Register root states that always need to be available to all areas of your application immediately</li>
+        </ul>
+    </aside>
+</section>
+<section>
+    <h2>@ngrx/store: Reducers</h2>
+    <h3>Registering Feature State</h3>
+    <pre><code data-trim class="typescript">
+        import { loginReducer } from './login.reducer';
+        
+        @NgModule({
+            imports: [StoreModule.forFeature('user', loginReducer)],
+        })
+        export class LoginModule {}
+    </code></pre>
+    <pre><code data-trim class="typescript">
+        @NgModule({
+            imports: [StoreModule.forRoot({}), LoginModule],
+        })
+        export class AppModule {}
+    </code></pre>
+    
+    <pre><code data-trim class="typescript">
+        // The state
+        { user: {} }
+    </code></pre>
+    <aside class="notes">
+        <ul>
+            <li>For additional states registered with feature NgModule's.</li>
+            <li>Add LoginModule to AppModule to register in the store.</li>
+            <li>Once the LoginModule is loaded, the login key becomes a property in the object and is now managed in the state. (-> Lazy Loading)</li>
+            <li>You use feature states to build up your state object over time and through different feature areas.</li>
+        </ul>
+    </aside>
+</section>
+<section>
+    <h2>@ngrx/store: Reducers TODO</h2>
+    <h3>Good Reducers Writing Rules</h3>
+    <ul>
+        <li>Avoid nested conditions in reducers and effects</li>
+        <li>Reducer functions are pure functions</li>
+        <li>Handle each state transition synchronously</li>
+    </ul>
+    <aside class="notes">
+        <p>Do not subtype actions -> Add menu item with subtype burger or taco</p>
+        <p>Better stack case statements and better put multiple ActionTypes in the effect</p>
+    </aside>
+</section>
+<section>
+    <h2>NGRX</h2>
+    <img src="chapters/images/StateManagement_Redux_ToddMotto.jpg" height="500px">
     <p>Source: Todd Motto</p>
 </section>
 <section>
-    <h2>NGRX Store: Router State TODO</h2>
-    <p></p>
+    <h2>@ngrx/store: Selectors</h2>
+    <img src="chapters/images/StateManagement_Redux_Selectors_ToddMotto.png" height="500px">
+    <p>Source: Todd Motto</p>
+</section>
+<section>
+    <h2>@ngrx/store: Selectors</h2>
+    <ul>
+        <li>Pure functions used to select, derive and compose pieces of state.</li>
+        <li>Selectors are queries to your store.</li>
+    </ul>
+    <aside class="notes">
+        <ul>
+            <li>Containers have View Model.</li>
+            <li>Components have Inputs.</li>
+            <li>In the Store there is the Model (State).</li>
+            <li>Container can dispatch Actions and changes the State.</li>
+            <li>Container will be triggered because of state changes through the Selectors.</li>
+        </ul>
+    </aside>
+</section>
+<section>
+    <h2>@ngrx/store: Selectors</h2>
+    <h3>Structure</h3>
+    <p>createSelector</p>
+    <pre><code data-trim class="typescript">
+        const getState = createSelector();
+        const getUser = createSelector('user');
+    </code></pre>
+</section>
+<section>
+    <h2>@ngrx/store: Selectors</h2>
+    <h3>Structure</h3>
+    <p>createFeatureSelector (for FeatureModules)</p>
+    <pre><code data-trim class="typescript">
+        const getUser = createFeatureSelector('user');
+        const isAdmin = createSelector(
+            getUser,
+            user => user.role === 'admin' // Projector function 
+        )
+    </code></pre>
+</section>
+<section>
+    <h2>@ngrx/store: Selectors</h2>
+    <h3>Usage</h3>
+    <pre><code data-trim class="typescript">
+        constructor(private store: Store&lt;AppState>) {}
+        ngOnInit() {
+            const user$ = this.store.select(getUser);
+            const isAdmin$ = this.store.select(isAdmin);
+        }
+    </code></pre>
+</section>
+<section>
+    <h2>@ngrx/store: Selectors TODO</h2>
+    <h3>Good Selectors Writing Rules</h3>
+    <ul>
+        <li>pure functions</li>
+    </ul>
+</section>
+<section>
+    <h2>@ngrx/router-store</h2>
+    <p>Removes routing from the component</p>
+    <p>URL bar as single state tree</p>
+</section>
+<section>
+    <h2>@ngrx/router-store</h2>
+    <h3>Structure</h3>
+    <pre><code data-trim class="typescript">
+        // route snapshot in state for route '/users/1'
+        {
+            routerReducer: {
+                state: {
+                    url: '/users'
+                    queryParams: '',
+                    params: '1',
+                }
+            }
+        }
+    </code></pre>
+</section>
+<section>
+    <h2>@ngrx/router-store</h2>
+    <h3>Usage</h3>
+    <pre><code data-trim class="typescript">
+        // with routing in component
+        ngOnInit() {
+            const id = this.route.params.userId;
+            const user$ = this.store.select(getUserById(id));
+        };
+    </code></pre>
+    <pre><code data-trim class="typescript">
+        const getRouterState = createFeatureSelector('routerReducer');
+        const getUserById = createSelector(
+            getUsers, getRouterState,
+            (users, router) => {
+                return router.state && users.find(user => user.id === router.state.params.userId)
+            }
+        );
+
+        // without routing in component 
+        ngOnInit() {
+            const user$ = this.store.select(getUserById)
+        }
+    </code></pre>
 </section>
 <section>
     <h2>Exercise 1</h2>
