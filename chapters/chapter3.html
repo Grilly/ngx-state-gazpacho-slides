@@ -1,15 +1,105 @@
 <section>
-    <h2>NGRX Effects TODO</h2>
+    <h2>@ngrx/effects TODO</h2>
     <p>Warum und für was verwendet? 
-
-            Wo implementiert? in Feature-Modulen 
-            
-            Dependency zum Store: Wie, wann und wo? 
-            
-            Was ist Action dispatch in Effects? </p>
+        Wo implementiert? in Feature-Modulen 
+        Dependency zum Store: Wie, wann und wo? 
+        Was ist Action dispatch in Effects? </p>
+        <p>Reducers and Effects should be the decision makers in the application</p>
+        <p>Wir können das Verhalten gegenüber dem Server von den Effects aus steuern und nicht vom eigentlichen Service</p>
 </section>
 <section>
     <h2>Exercise 3</h2>
     <h3>Effects</h3>
+    <p>RxJS powered side effect model for Store
+
+            Effects provides an API to model event sources as actions</p>
+
+    <ul>
+        <li>Listen for actions dispatched from Store.
+                Isolate side effects from components, allowing for more pure components that select state and dispatch actions.
+                Provide new sources of actions to reduce state based on external interactions such as network requests, web socket messages and time-based events.</li>
+    </ul>
+    <h3>APIs</h3>
+    <p>
+            Effects are injectable service classes that use two main APIs.
+
+            Effect decorator
+            The Effect decorator provides metadata to register observable side-effects in the effects class. Registered effects provide new actions provided by the source Observable to the store.
+            
+            Actions Observable
+            Represents an observable of all actions dispatched to the store.
+            Emits the latest action after the action has passed through all reducers.
+            The ofType operator lets you filter for actions of a certain type in which you want to use to perform a side effect.
+    </p>
+</section>
+<section>
+    <h2>@ngrx/effects TODO</h2>
+    <h3>Structur</h3>
+    <p>Create an AuthEffects service that describes a source of login actions:</p>
+    <pre><code data-trim class="typescript">
+        // ./effects/auth.effects.ts
+        import { Injectable } from '@angular/core';
+        import { HttpClient } from '@angular/common/http';
+        import { Action } from '@ngrx/store';
+        import { Actions, Effect, ofType } from '@ngrx/effects';
+        import { Observable, of } from 'rxjs';
+        import { catchError, map, mergeMap } from 'rxjs/operators';
+            
+        @Injectable()
+        export class AuthEffects {
+            // Listen for the 'LOGIN' action
+            @Effect()
+            login$: Observable<Action> = this.actions$.pipe(
+            ofType('LOGIN'),
+            mergeMap(action =>
+                this.http.post('/auth', action.payload).pipe(
+                // If successful, dispatch success action with result
+                map(data => ({ type: 'LOGIN_SUCCESS', payload: data })),
+                // If request fails, dispatch failed action
+                catchError(() => of({ type: 'LOGIN_FAILED' }))
+                )
+            )
+            );
+            
+            constructor(private http: HttpClient, private actions$: Actions) {}
+        }
+    </code></pre>
+</section>
+<section>
+    <h2>@ngrx/effects TODO</h2>
+    <h3>Usage</h3>
+    <p>Register the EffectsModule in your application root imports. This EffectsModule must be added to your root NgModule for the effects providers to be registered and start when your application is loaded.</p>
+    <pre><code data-trim class="typescript">
+        import { EffectsModule } from '@ngrx/effects';
+        import { AuthEffects } from './effects/auth.effects';
+        
+        @NgModule({
+            imports: [EffectsModule.forRoot([AuthEffects])],
+        })
+        export class AppModule {}
+    </code></pre>
+</section>
+<section>
+    <h2>@ngrx/effects TODO</h2>
+    <h3>Usage</h3>
+    <p>For feature modules, register your effects via EffectsModule.forFeature method in your module's imports:</p>
+    <pre><code data-trim class="typescript">
+        import { EffectsModule } from '@ngrx/effects';
+        import { AdminEffects } from './effects/admin.effects';
+        
+        @NgModule({
+            imports: [EffectsModule.forFeature([AdminEffects])],
+        })
+        export class AdminModule {}
+    </code></pre>
+</section>
+<section>
+    <h2>@ngrx/effects TODO</h2>
+    <h3>LoggerEffect</h3>
+    Effect erwartet immer ein dispatch als letzte Aktion
+    sonst
+    @Effect(dispatch = false)
+    LoggerEffect
+    weil nur console.log() als letzte Aktion, sonst immer Action als letzte Aktion
 </section>
     
