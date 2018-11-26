@@ -10,50 +10,116 @@
     </code></pre>
     <p>-> With 5000 users!?!?</p>
     <aside class="notes">
-        we have to iterate 5000 users
+        <ul>
+            <li>We have to iterate 5000 users!</li>
+            <li>Challenge: Load the 5000th user as fast as the third user.</li>
+        </ul>
     </aside>
 </section>
 <section>
-    <h2>@ngrx/entity TODO</h2>
-    <p>Entity pattern for fast object look ups</p> 5000ster genauso schnell wie 3ter
-    <p>Quickly access one user</p>
-    Array -> 
-    -> Flattened Array (object structure)
-    const users = [
-        {id: 'UUID1', name: 'Peter Mueller'},
-        {id: 'UUID2', name: 'Petra Huber'}
-    ];
-    const usersFlattened = {
-        0: {id: 'UUID1', name: 'Peter Mueller'},
-        1: {id: 'UUID2', name: 'Petra Huber'}
-    };
-
-    export interface User {
-        id: string;
-        name: string;
-    }
-    
-    export interface State extends EntityState<User> {}
-
-    Adapter for State manipulation and selecting: Die will ich verwalten. Verwaltet alle Objecte für mich
-    export const adapter: EntityAdapter<User> = createEntityAdapter<User>();
-    export const initialState: State = adapter.getInitalState({});
-
-    const getUsers = createSelector(ParentSliceSelector, (state) => state.user); // nur Bereich
-    adapter.getSelectors(getUsers); // Adapter erzeugt Selectoren für den Bereich
-
-
-
-        adapter.addOne()
+    <h2>@ngrx/entity</h2>
+    <h3>Motivation</h3>
+    <pre><code data-trim class="typescript">
+        const users = [
+            {id: 'UUID1', name: 'Peter Mueller'},
+            ...
+            {id: 'UUID5000', name: 'Petra Huber'}
+        ];
+        const id = 'UUID5000';
+        const user = users.find(user => user.id === id); 
+        // iterate 5000 users!!!!!!??????
+    </code></pre>
+    <p class="fragment">-> Flatten the users array into an object structure</p>
+    <pre class="fragment"><code data-trim class="typescript">
+        const usersFlattened = {
+            0: {id: 'UUID1', name: 'Peter Mueller'},
+            ...
+            4999: {id: 'UUID5000', name: 'Petra Huber'}
+        };
+        const user = usersFlattened[4999]; // faster
+    </code></pre>
 </section>
 <section>
-    <p>
-Entity State adapter for managing record collections.
-Entity provides an API to manipulate and query entity collections.</p>
-    <p>Reduces boilerplate for creating reducers that manage a collection of models.
-            Provides performant CRUD operations for managing entity collections.
-            Extensible type-safe adapters for selecting entity information.</p>
+    <h2>@ngrx/entity</h2>
+    <p>Big arrays are not very performant to work with</p>
+    <p>-> Entity Pattern for fast object look ups</p>
+    <ul>
+        <li>Provides standardized way to manage and select collections of objects</li>
+        <li>Provides performant CRUD operations</li>
+    </ul>
 </section>
+<section>
+    <h2>@ngrx/entity</h2>
+    <h3>Structure & Usage</h3>
+    <p>See the following exercise</p>
+</section>
+<!-- <section>
+    <h2>@ngrx/entity</h2>
+    <h3>Structure</h3>
+    <pre><code data-trim class="typescript">
+        // in reducer
+        import { EntityState, createEntityAdapter } from '@ngrx/entity';
+        import { createFeatureSelector } from '@ngrx/store';
+
+        export interface User {
+            id: string;
+            name: string;
+        }
+        export const userAdapter: EntityAdapter&lt;User> = createEntityAdapter&lt;User>();
+        export interface State extends EntityState&lt;User> {}
+
+        const defaultUser = {
+            ids: ['123'],
+            entities: {
+                '123': {
+                    id: '123',
+                    name: 'Peter'
+                }
+            }
+        }
+
+        export const initialState: State = userAdapter.getInitialState(defaultUser);
+
+        export function userReducer(
+            state: State = initialState,
+            action: actions.UserActions) {
+                switch (action.type) {
+                    case actions.CREATE:
+                        return userAdapter.addOne(action.user, state);
+                    default:
+                        return state;
+                }
+        }
+        export const getUserState = createFeatureSelector&lt;State>('user');
+        export const {
+            selectIds,
+            selectEntities,
+            selectAll
+        } = userAdapter.getSelectors(getUserState);
+    </code></pre>
+    <aside class="notes">
+        Adapter will be used for state manipulation, managing and selecting the user objects.
+        To make sure that the User interface is part of the AppState extend the state interface with EntityState interface typed to the user interface.
+    </aside>
+</section>
+<section>
+    <h2>@ngrx/entity</h2>
+    <h3>Usage</h3>
+    <pre><code data-trim class="typescript">
+        // in component
+        import * as fromUser from '../user.reducer';
+
+        ...
+        @Component({...})
+        export class UserComponent implements OnInit {
+            users: Observable&lt;any>;
+            constructur(private store: Store&lt;fromUser.State>) {}
+            ngOnInit() {
+                this.users = this.store.select(fromUser.selectAll);
+            }
+        }
+    </code></pre>
+</section> -->
 <section>
     <h2>Exercise 2</h2>
     <h3>Entities</h3>
