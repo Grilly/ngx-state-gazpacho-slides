@@ -18,30 +18,3 @@
         <li>Routing state</li>
     </ul>
 </section>
-<section>
-    <p>Selectors are reactive: When adding an active order the getAllOrders and getCurrentOrders selector will update not the getPastOrders selector </p>
-    <p>getOrderById</p>
-    <code><pre>
-        const getOrderById = (id) => createSelector(
-            getAllOrders,
-            orders => order.find(o => o.id === id) // problem with 10k items -> Better use ngrx/entity
-        );
-    </pre></code>
-    <p>Selectors Weiter TODO: https://ngrx.io/guide/store/selectors</p>
-</section>
-<section>
-    <h2>Effects TODO</h2>
-    <p>https://ngrx.io/guide/effects</p>
-</section>
-<section>
-    <h2>Entities TODO</h2>
-
-    <p>https://ngrx.io/guide/entity</p>
-    <p>discribe ids -> always UUID (-> string)</p>
-    <p>id comes from the backend</p>
-    <p>Entity kommt in den Store, wenn sich etwas im Backend ändert</p>
-</section>
-<section>
-    <h2>Normalizer</h2>
-    <p>Initial 1 JSON mit allen Daten</p>
-</section>
