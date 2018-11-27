@@ -108,13 +108,13 @@
     <pre><code data-trim class="typescript">
         @Injectable()
         export class LoggerEffect {
-            @Effect(dispatch = false)
-            log$: Observable&lt;Action> = this.actions$.pipe(
-                ofType('LOGIN'),
-                mergeMap(action =>
-                    console.log('Login started');
-                )
-            )
+            constructor(private actions$: Actions) { }
+
+            @Effect({ dispatch: false }) logActions$ = this.actions$
+                .do(action => {
+                        console.log(action);
+                    }
+                );
         }
     </code></pre>
 </section>
