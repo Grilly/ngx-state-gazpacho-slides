@@ -1,72 +1,77 @@
 <section>
-    <h2>@ngrx/effects TODO</h2>
-    <p>Warum und für was verwendet? 
-        Wo implementiert? in Feature-Modulen 
-        Dependency zum Store: Wie, wann und wo? 
-        Was ist Action dispatch in Effects? </p>
-        <p>Reducers and Effects should be the decision makers in the application</p>
-        <p>Wir können das Verhalten gegenüber dem Server von den Effects aus steuern und nicht vom eigentlichen Service</p>
+    <h2>NGRX</h2>
+    <img src="chapters/images/StateManagement_Redux_ToddMotto.jpg" height="500px">
+    <p>Source: Todd Motto</p>
 </section>
 <section>
-    <p>RxJS powered side effect model for Store
-
-            Effects provides an API to model event sources as actions</p>
-
+    <h2>@ngrx/effects</h2>
+    <img src="chapters/images/StateManagement_Redux_Effects_ToddMotto.png" height="500px">
+    <p>Source: Todd Motto</p>
+    <aside class="notes">
+        <ol>
+            <li>Load Action</li>
+            <li>Effect listens on Load Action</li>
+            <li>Effects calls the service that gets the data from the Backend asynchonously</li>
+            <li>When the data was given back from the backend to the service the effect will dispatch an Load Success Action to tell the reducer do something with the retrieved data</li>
+            <li>The reducer stores the data in den state</li>
+        </ol>
+    </aside>
+</section>
+<section>
+    <h2>@ngrx/effects</h2>
     <ul>
-        <li>Listen for actions dispatched from Store.
-                Isolate side effects from components, allowing for more pure components that select state and dispatch actions.
-                Provide new sources of actions to reduce state based on external interactions such as network requests, web socket messages and time-based events.</li>
+        <li>RxJS powered side effects model for @ngrx/store</li>
+        <li>Pure function</li>
+        <li>Synchronous</li>
+        <li>Listen for @ngrx/store actions</li> 
+        <li>Isolate side effects from components</li>
+        <li>Communicate outside of Angular</li>
     </ul>
-    <h3>APIs</h3>
-    <p>
-            Effects are injectable service classes that use two main APIs.
-
-            Effect decorator
-            The Effect decorator provides metadata to register observable side-effects in the effects class. Registered effects provide new actions provided by the source Observable to the store.
-            
-            Actions Observable
-            Represents an observable of all actions dispatched to the store.
-            Emits the latest action after the action has passed through all reducers.
-            The ofType operator lets you filter for actions of a certain type in which you want to use to perform a side effect.
-    </p>
+    <aside class="notes">
+        <ul>
+            <li>use for backend requests</li>
+            <li>allowing for more pure components that select state and dispatch actions</li>
+            <li>communicate outside of Angular: use for websocket communication</li>
+            <li>Reducers and Effects should be the decision makers in the application</li>
+        </ul>
+    </aside>
 </section>
 <section>
-    <h2>@ngrx/effects TODO</h2>
+    <h2>@ngrx/effects</h2>
     <h3>Structur</h3>
     <p>Create an AuthEffects service that describes a source of login actions:</p>
-    <pre><code data-trim class="typescript">
+    <pre><code data-trim class="typescript" style="font-size: 17px">
         // ./effects/auth.effects.ts
-        import { Injectable } from '@angular/core';
-        import { HttpClient } from '@angular/common/http';
-        import { Action } from '@ngrx/store';
-        import { Actions, Effect, ofType } from '@ngrx/effects';
-        import { Observable, of } from 'rxjs';
-        import { catchError, map, mergeMap } from 'rxjs/operators';
-            
         @Injectable()
         export class AuthEffects {
-            // Listen for the 'LOGIN' action
             @Effect()
-            login$: Observable<Action> = this.actions$.pipe(
-            ofType('LOGIN'),
-            mergeMap(action =>
-                this.http.post('/auth', action.payload).pipe(
-                // If successful, dispatch success action with result
-                map(data => ({ type: 'LOGIN_SUCCESS', payload: data })),
-                // If request fails, dispatch failed action
-                catchError(() => of({ type: 'LOGIN_FAILED' }))
+            login$: Observable&lt;Action> = this.actions$.pipe(
+                ofType('LOGIN'),
+                mergeMap(action =>
+                    this.http.post('/auth', action.payload).pipe(
+                        map(data => ({ type: '[API] LOGIN_SUCCESS', payload: data })),
+                        catchError(() => of({ type: '[API] LOGIN_FAILED' }))
+                    )
                 )
-            )
             );
-            
             constructor(private http: HttpClient, private actions$: Actions) {}
         }
     </code></pre>
+    <aside class="notes">
+        <ul>
+            <li>Injectable with Effect decorator</li>
+            <li>ofType: effect reacts on 'LOGIN' action after is has passed through all reducers</li>
+            <li>mergeMap: Map to observable, emit values.</li>
+            <li>Call auth API</li>
+            <li>If successful, dispatch success action with result</li>
+            <li>// If request fails, dispatch failed action</li>
+            <li>Effect has to return an action!</li>
+        </ul>
+    </aside>
 </section>
 <section>
-    <h2>@ngrx/effects TODO</h2>
+    <h2>@ngrx/effects</h2>
     <h3>Usage</h3>
-    <p>Register the EffectsModule in your application root imports. This EffectsModule must be added to your root NgModule for the effects providers to be registered and start when your application is loaded.</p>
     <pre><code data-trim class="typescript">
         import { EffectsModule } from '@ngrx/effects';
         import { AuthEffects } from './effects/auth.effects';
@@ -76,11 +81,13 @@
         })
         export class AppModule {}
     </code></pre>
+    <aside class="notes">
+        Register the EffectsModule in your application root imports. This EffectsModule must be added to your root NgModule for the effects providers to be registered and start when your application is loaded.
+    </aside>
 </section>
 <section>
-    <h2>@ngrx/effects TODO</h2>
+    <h2>@ngrx/effects</h2>
     <h3>Usage</h3>
-    <p>For feature modules, register your effects via EffectsModule.forFeature method in your module's imports:</p>
     <pre><code data-trim class="typescript">
         import { EffectsModule } from '@ngrx/effects';
         import { AdminEffects } from './effects/admin.effects';
@@ -90,15 +97,26 @@
         })
         export class AdminModule {}
     </code></pre>
+    <aside class="notes">
+        For feature modules, register your effects via EffectsModule.forFeature method in your module's imports.
+    </aside>
 </section>
 <section>
-    <h2>@ngrx/effects TODO</h2>
+    <h2>@ngrx/effects</h2>
     <h3>LoggerEffect</h3>
-    Effect erwartet immer ein dispatch als letzte Aktion
-    sonst
-    @Effect(dispatch = false)
-    LoggerEffect
-    weil nur console.log() als letzte Aktion, sonst immer Action als letzte Aktion
+    <p>Effect always returns an action, but...</p>
+    <pre><code data-trim class="typescript">
+        @Injectable()
+        export class LoggerEffect {
+            @Effect(dispatch = false)
+            log$: Observable&lt;Action> = this.actions$.pipe(
+                ofType('LOGIN'),
+                mergeMap(action =>
+                    console.log('Login started');
+                )
+            )
+        }
+    </code></pre>
 </section>
 <section>
     <h2>Exercise 3</h2>
