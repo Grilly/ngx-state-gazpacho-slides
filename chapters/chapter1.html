@@ -90,7 +90,7 @@
 </section>
 <section>
     <h2>@ngrx/store: Actions</h2>
-    <h3>Good Actions Writing Rules</h3>
+    <h3>Actions Writing Rules</h3>
     <ul>
         <li>Upfront - write actions before developing features</li>
         <li>Divide - categorize actions based on the event source</li>
@@ -113,17 +113,18 @@
     <ul>
         <li>Responsible for state changes in an immutable way</li>
         <li>Pure functions</li>
-        <li>Takes current state and the latest action dispatched to compute based on the action type a new state</li>
+        <li>Takes current state and the latest action dispatched to compute a new state</li>
     </ul>
 </section>
 <section>
     <h2>@ngrx/store: Reducers</h2>
     <h3>Structure</h3>
     <pre><code data-trim class="typescript">
-        export function loginReducer(state = {}, action: Scoreboard.ActionsUnion): State {
+        export function loginReducer(
+            state = { username = '' }, action: ActionsUnion): State {
             switch (action.type) {
                 case '[Login Page] Login': {
-                    return [...state, {username: action.payload.username}]
+                    return {...state, username: action.payload.username }
                 }
                 default: {
                     return state;
@@ -201,8 +202,8 @@
     </aside>
 </section>
 <section>
-    <h2>@ngrx/store: Reducers TODO</h2>
-    <h3>Good Reducers Writing Rules</h3>
+    <h2>@ngrx/store: Reducers</h2>
+    <h3>Reducers Writing Rules</h3>
     <ul>
         <li>Avoid nested conditions in reducers and effects</li>
         <li>Reducer functions are pure functions</li>
@@ -266,16 +267,17 @@
     <pre><code data-trim class="typescript">
         constructor(private store: Store&lt;AppState>) {}
         ngOnInit() {
-            const user$ = this.store.select(getUser);
-            const isAdmin$ = this.store.select(isAdmin);
+            const user$ = this.store.pipe(select(getUser));
+            const isAdmin$ = this.store.pipe(select(isAdmin));
         }
     </code></pre>
 </section>
 <section>
-    <h2>@ngrx/store: Selectors TODO</h2>
-    <h3>Good Selectors Writing Rules</h3>
+    <h2>@ngrx/store: Selectors</h2>
+    <h3>Selectors Writing Rules</h3>
     <ul>
         <li>pure functions</li>
+        <li>use a naming convention like 'select*' or 'Get*Selector'</li>
     </ul>
 </section>
 <section>
@@ -295,8 +297,9 @@
 </section>
 <section>
     <h2>@ngrx/router-store</h2>
-    <p>Removes routing from the component</p>
+    <p>No more dependency to router service needed</p>
     <p>URL bar as single state tree</p>
+    <p>Router state should be manually serialized to ease selector code.</p>
 </section>
 <section>
     <h2>@ngrx/router-store</h2>
@@ -321,7 +324,7 @@
         // with routing in component
         ngOnInit() {
             const id = this.route.params.userId;
-            const user$ = this.store.select(getUserById(id));
+            const user$ = this.store.pipe(select(getUserById(id)));
         };
     </code></pre>
     <pre><code data-trim class="typescript">
@@ -335,7 +338,7 @@
 
         // without routing in component 
         ngOnInit() {
-            const user$ = this.store.select(getUserById)
+            const user$ = this.store.pipe(select(getUserById))
         }
     </code></pre>
 </section>

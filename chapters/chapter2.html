@@ -29,14 +29,14 @@
         const user = users.find(user => user.id === id); 
         // iterate 5000 users!!!!!!??????
     </code></pre>
-    <p class="fragment">-> Flatten the users array into an object structure</p>
+    <p class="fragment">-> Transform the users array into an object structure</p>
     <pre class="fragment"><code data-trim class="typescript">
-        const usersFlattened = {
+        const users = {
             0: {id: 'UUID1', name: 'Peter Mueller'},
             ...
             4999: {id: 'UUID5000', name: 'Petra Huber'}
         };
-        const user = usersFlattened[4999]; // faster
+        const user = users[4999]; // faster
     </code></pre>
 </section>
 <section>
