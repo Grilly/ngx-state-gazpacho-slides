@@ -110,7 +110,7 @@
         export class LoggerEffect {
             constructor(private actions$: Actions) { }
 
-            @Effect({ dispatch: false }) logActions$ = this.actions$
+            @Effect({ dispatch: false }) logActions$: Observable<void></void> = this.actions$
                 .do(action => {
                         console.log(action);
                     }
