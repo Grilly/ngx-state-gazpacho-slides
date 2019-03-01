@@ -126,15 +126,15 @@
     <h3>Structure</h3>
     <pre><code data-trim class="typescript">
         export function loginReducer(
-            state = { username = '' }, action: ActionsUnion): State {
-            switch (action.type) {
-                case '[Login Page] Login': {
-                    return {...state, username: action.payload.username }
-                }
-                default: {
-                    return state;
-                }
+          state = { username = '' }, action: ActionsUnion): State {
+          switch (action.type) {
+            case '[Login Page] Login': {
+              return {...state, username: action.payload.username }
             }
+            default: {
+              return state;
+            }
+          }
         }
     </code></pre>
     <aside class="notes">
